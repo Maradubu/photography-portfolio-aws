@@ -4,27 +4,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Photography Portfolio</title>
+    <title>MARA / PHOTOGRAPHY</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>My Photography Portfolio</h1>
-        <p>Capturing places, people and moments.</p>
-    </header>
+<header class="site-header">
+    <a href="index.html" class="site-logo">MARA<span> / </span>PHOTOGRAPHY</a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+
+        <button id="theme-toggle"
+                type="button"
+                aria-label="Switch to dark mode">
+            ☾
+        </button>
+    </nav>
+</header>
 
 <main>
-    <section class="introduction">
-        <h2>Selected Photography</h2>
-        <p>A collection of photographs and visual stories.</p>
+    <section class="introduction" id="work">
+        <p class="eyebrow">INDEPENDENT PHOTOGRAPHY / SELECTED WORK</p>
+        <h1>Observations of the everyday.</h1>
+        <p class="intro-text">
+            A collection of photographs exploring places,
+            people, architecture and the spaces in between.
+        </p>
     </section>
 
-   <section class="gallery">
-    <!-- Photography gallery: images will be added here -->
+    <section class="gallery" aria-label="Photography gallery">
+        <!-- Photographs will be added here -->
+    </section>
 
-</section>
-
+    <section class="about" id="about">
+        <h2>About</h2>
+        <p>
+            An ongoing photographic exploration of ordinary
+            places, unexpected details and fleeting moments.
+        </p>
+    </section>
 </main>
+<footer class="site-footer">
+    <p>© 2026 MARA / Photography</p>
+    <p>Independent visual observations</p>
+</footer>
+
+<script src="script.js"></script>
 
 </body>
 </html>
