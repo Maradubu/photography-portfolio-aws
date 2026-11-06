@@ -16,9 +16,17 @@
     MARA <span class="logo-separator">|</span> <span>PHOTOGRAPHY</span>
     </a>
 
-   <nav class="site-nav">
+  <nav class="site-nav">
     <a href="#work">Work</a>
     <a href="#about">About</a>
+    <button
+        type="button"
+        id="contact-trigger"
+        class="contact-trigger"
+        aria-haspopup="dialog"
+        aria-controls="contact-modal">
+        Contact
+    </button>
 
     <!-- Audio control -->
     <button
@@ -36,9 +44,6 @@
         ☾
     </button>
 </nav>
-
-
-    </nav>
 </header>
 
 <main>
@@ -54,7 +59,7 @@
 </p>
     </section>
 
-    <section class="gallery" id="work"></section>
+    <section class="gallery" id="gallery"></section>
 
     <section class="about" id="about">
         <h2>About</h2>
@@ -80,6 +85,71 @@
     <button class="lightbox-next" aria-label="Next photograph">
         &#8594;
     </button>
+</div>
+
+<!-- Contact form overlay -->
+<div class="contact-overlay" id="contact-modal" hidden>
+    <div
+        class="contact-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-title">
+
+        <button
+            type="button"
+            class="contact-close"
+            aria-label="Close contact form">
+            &times;
+        </button>
+
+        <p class="eyebrow">GET IN TOUCH</p>
+
+        <h2 id="contact-title">Have something in mind?</h2>
+
+        <p class="contact-intro">
+            For enquiries, collaborations or simply to say hello.
+        </p>
+
+        <form id="contact-form">
+            <div class="form-field">
+                <label for="contact-name">Name</label>
+                <input
+                    type="text"
+                    id="contact-name"
+                    name="name"
+                    maxlength="100"
+                    autocomplete="name"
+                    required>
+            </div>
+
+            <div class="form-field">
+                <label for="contact-email">Email</label>
+                <input
+                    type="email"
+                    id="contact-email"
+                    name="email"
+                    maxlength="254"
+                    autocomplete="email"
+                    required>
+            </div>
+
+            <div class="form-field">
+                <label for="contact-message">Message</label>
+                <textarea
+                    id="contact-message"
+                    name="message"
+                    rows="5"
+                    maxlength="2000"
+                    required></textarea>
+            </div>
+
+           <button type="submit" class="contact-submit" disabled>
+           Coming soon
+           </button>
+
+            <p class="contact-status" role="status" aria-live="polite"></p>
+        </form>
+    </div>
 </div>
 
 <footer class="site-footer">

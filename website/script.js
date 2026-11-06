@@ -244,3 +244,33 @@ soundToggle.addEventListener("click", async () => {
     }
 
 });
+// Contact form overlay
+const contactTrigger = document.getElementById("contact-trigger");
+const contactModal = document.getElementById("contact-modal");
+const contactClose = document.querySelector(".contact-close");
+
+contactTrigger.addEventListener("click", () => {
+    contactModal.hidden = false;
+});
+
+contactClose.addEventListener("click", () => {
+    contactModal.hidden = true;
+});
+
+// Close when clicking outside the panel
+contactModal.addEventListener("click", (event) => {
+    if (event.target === contactModal) {
+        contactModal.hidden = true;
+    }
+});
+
+// Contact form — backend not connected yet
+const contactForm = document.getElementById("contact-form");
+const contactStatus = document.querySelector(".contact-status");
+
+contactForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    contactStatus.textContent =
+        "Contact form is currently being configured. Please try again later.";
+});
