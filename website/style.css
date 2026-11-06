@@ -196,14 +196,28 @@ h1 {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 80px;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    gap: 14px;
+  }
+
+  .gallery-item,
+  .gallery-item:nth-child(9n + 1),
+  .gallery-item:nth-child(9n + 4),
+  .gallery-item:nth-child(9n + 7),
+  .gallery-item:nth-child(9n + 6),
+  .gallery-item:nth-child(28) {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: auto;
   }
 }
-
 .about {
     width: 100%;
     max-width: 700px;
