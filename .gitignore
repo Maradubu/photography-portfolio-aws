@@ -1,2 +1,18 @@
-.DS_Store
+# Python
 .venv/
+__pycache__/
+*.pyc
+
+# Environment variables and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# macOS
+.DS_Store
+
+# Editor settings
+.vscode/
