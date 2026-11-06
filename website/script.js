@@ -267,10 +267,17 @@ contactModal.addEventListener("click", (event) => {
 // Contact form — backend not connected yet
 const contactForm = document.getElementById("contact-form");
 const contactStatus = document.querySelector(".contact-status");
-
+const honeypot = document.getElementById("contact-website");
 contactForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
+    // Detect basic automated spam
+    if (honeypot.value.trim() !== "") {
+        console.warn("Honeypot triggered: submission blocked.");
+        return;
+    }
+
+    // AWS backend is not connected yet
     contactStatus.textContent =
-        "Contact form is currently being configured. Please try again later.";
+        "Contact form is currently being configured.";
 });

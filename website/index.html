@@ -111,6 +111,17 @@
         </p>
 
         <form id="contact-form">
+        
+            <!-- Honeypot: leave empty -->
+        <div class="honeypot" aria-hidden="true">
+        <label for="contact-website">Website</label>
+        <input
+        type="text"
+        id="contact-website"
+        name="website"
+        tabindex="-1"
+        autocomplete="off">
+        </div>
             <div class="form-field">
                 <label for="contact-name">Name</label>
                 <input

@@ -630,3 +630,12 @@ h1 {
 .site-logo {
     flex-shrink: 0;
 }
+/* Spam prevention: honeypot field */
+.honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
