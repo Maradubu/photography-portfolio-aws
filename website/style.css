@@ -623,3 +623,10 @@ h1 {
         padding: 32px 24px;
     }
 }
+.site-header {
+    gap: 20px;
+}
+
+.site-logo {
+    flex-shrink: 0;
+}
