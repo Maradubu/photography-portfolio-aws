@@ -6,20 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MARA / PHOTOGRAPHY</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="site-header">
-    <a href="index.html" class="site-logo">MARA<span> / </span>PHOTOGRAPHY</a>
+    <a href="#" class="site-logo">
+    MARA <span class="logo-separator">|</span> <span>PHOTOGRAPHY</span>
+    </a>
 
-    <nav class="site-nav" aria-label="Main navigation">
-        <a href="#work">Work</a>
-        <a href="#about">About</a>
+   <nav class="site-nav">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
 
-        <button id="theme-toggle"
-                type="button"
-                aria-label="Switch to dark mode">
-            ☾
-        </button>
+    <!-- Audio control -->
+    <button
+        id="sound-toggle"
+        class="sound-toggle"
+        type="button"
+        aria-label="Play ambient audio"
+        aria-pressed="false">
+        <span class="sound-icon">▷</span>
+        <span class="sound-label">Audio Off</span>
+    </button>
+
+    <!-- Light / dark mode -->
+    <button id="theme-toggle" aria-label="Toggle theme">
+        ☾
+    </button>
+</nav>
+
+
     </nav>
 </header>
 
@@ -27,15 +45,16 @@
     <section class="introduction" id="work">
         <p class="eyebrow">INDEPENDENT PHOTOGRAPHY / SELECTED WORK</p>
         <h1>Observations of the everyday.</h1>
-        <p class="intro-text">
-            A collection of photographs exploring places,
-            people, architecture and the spaces in between.
-        </p>
+
+<p>
+  An evolving photographic archive of places, structures and
+  incidental compositions. Exploring the interplay of architecture,
+  geometry, colour and light, with an emphasis on the overlooked
+  and the seemingly ordinary.
+</p>
     </section>
 
-    <section class="gallery" aria-label="Photography gallery">
-        <!-- Photographs will be added here -->
-    </section>
+    <section class="gallery" id="work"></section>
 
     <section class="about" id="about">
         <h2>About</h2>
@@ -45,10 +64,34 @@
         </p>
     </section>
 </main>
+
+<!-- Full-screen photography viewer -->
+<div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox-close" aria-label="Close viewer">
+        &times;
+    </button>
+
+    <button class="lightbox-prev" aria-label="Previous photograph">
+        &#8592;
+    </button>
+
+    <img class="lightbox-image" src="" alt="">
+
+    <button class="lightbox-next" aria-label="Next photograph">
+        &#8594;
+    </button>
+</div>
+
 <footer class="site-footer">
-    <p>© 2026 MARA / Photography</p>
+    <p>© 2026 MARA </p>
     <p>Independent visual observations</p>
 </footer>
+
+<audio id="background-audio"
+       src="audio/ambient.mp3"
+       loop
+       preload="none">
+</audio>
 
 <script src="script.js"></script>
 
