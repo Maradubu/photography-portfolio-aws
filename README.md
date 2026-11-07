@@ -1,170 +1,117 @@
-# MARA — Photography Portfolio & Cloud Engineering Project
+# MARA Photography
 
-**Live website:** [Explore MARA](https://maradubu.github.io/photography-portfolio-aws/)  
-**Project status:** Photography website live on GitHub Pages · AWS infrastructure planned
+**Live website:** https://mara.photography  
+**Source code:** https://github.com/Maradubu/photography-portfolio-aws
 
-MARA is an independent photography portfolio exploring architecture, geometry, colour, light and the overlooked details of everyday life. Both the photography and the website are original work, combining a personal visual practice with modern web development.
+## Overview
 
-Beyond its creative purpose, MARA serves as a practical cloud engineering and cybersecurity project. Already live through GitHub Pages with automated deployment via GitHub Actions, the project provides a foundation for implementing secure AWS hosting, identity and access management, monitoring, and a serverless contact service.
+MARA Photography is a personal portfolio presenting my original photographic work. The website is designed to give the images room to speak for themselves, with a restrained interface, responsive gallery and immersive viewing experience. It is **live on AWS** at [mara.photography](https://mara.photography).
 
-The objective is to develop and document a complete, secure and maintainable cloud-hosted application through hands-on implementation.
+The project also serves a second purpose: developing and demonstrating practical skills in **cloud engineering, networking, automation and cybersecurity**. Rather than stopping at a local website, I built and deployed a working public service, connected a custom domain, configured HTTPS and private storage, and investigated real DNS and certificate-validation issues. The architecture is deliberately small and cost-conscious, with further improvements planned as my skills develop.
 
-## Website preview
+## Features
 
-Visit the [live website](https://maradubu.github.io/photography-portfolio-aws/).
+- Responsive photography gallery with fullscreen lightbox
+- Dark and light themes
+- Optional ambient audio, loaded on demand
+- Contact form interface (**email delivery is not yet connected**)
+- Optimised WebP images and a Python image-optimisation script
 
-> Screenshot coming soon: a cropped desktop view of MARA will be added here.
+## Architecture
 
-## Features implemented
-
-- Responsive photography gallery with a full-screen lightbox
-- Light and dark themes
-- Optional, user-initiated ambient audio
-- Contact interface with a honeypot field for basic bot detection; message delivery is **not yet enabled**
-- Optimised WebP photography assets and a Python image-processing script
-- Version-controlled source code and automated GitHub Pages deployment
-
-## Current architecture
-
-```mermaid
-flowchart TD
-    Dev[Developer using VS Code] --> Git[GitHub repository]
-    Git --> Actions[GitHub Actions workflow]
-    Actions --> Pages[GitHub Pages]
-    Visitor[Website visitor] --> Pages
-    Pages --> Browser[Static HTML, CSS, JavaScript and images]
+```text
+Visitor requests https://mara.photography
+                 |
+                 v
+Amazon Route 53 — DNS resolution (apex and www aliases)
+                 |
+                 v
+Amazon CloudFront — HTTPS, CDN and caching
+       |         AWS Certificate Manager certificate
+       |         (us-east-1)
+       v
+CloudFront Origin Access Control (OAC)*
+                 |
+                 v
+Private Amazon S3 bucket — static website assets
+(eu-west-2; Block Public Access enabled)
 ```
 
-The workflow deploys the contents of `website/` whenever the configured deployment workflow runs following changes to the main branch.
 
-## Proposed AWS architecture — not yet deployed
+The domain is registered at Namecheap, but Amazon Route 53 hosts authoritative DNS. The website uses managed AWS services, so it does not require a customer-managed Virtual Private Cloud (VPC), Amazon EC2 instance or public S3 website endpoint.
 
-```mermaid
-flowchart TB
-    Visitor[Website visitor] --> CF[Amazon CloudFront]
-    CF --> S3[Private Amazon S3 bucket]
-    Visitor --> API[Amazon API Gateway]
-    API --> Lambda[AWS Lambda: validate and process contact requests]
-    Lambda --> SES[Amazon Simple Email Service]
+## Technology stack
 
-    Developer[Administrator / developer] --> Identity[AWS IAM Identity Center]
-    Identity --> Roles[IAM roles and permission sets]
-    Roles --> AWS[Access to AWS resources]
-    Deploy[Deployment automation] --> DeployRole[Least-privilege IAM deployment role]
-    DeployRole --> S3
-    DeployRole --> CF
-    Lambda --> LambdaRole[Least-privilege IAM execution role]
-
-    AWS --> Trail[AWS CloudTrail: API audit activity]
-    Lambda --> Watch[Amazon CloudWatch: logs and metrics]
-    API --> Watch
-    AWS --> Budget[AWS Budgets: cost thresholds and alerts]
-```
-
-The diagram represents the **target design**, not services currently running in the AWS account. Public website traffic and administrative access are separate concerns. The exact implementation and permissions will be validated during deployment.
-
-## Technology and services
-
-| Technology or service | Purpose | Status |
+| Area | Technology | Purpose |
 | --- | --- | --- |
-| HTML, CSS, JavaScript | Responsive website and interactions | Implemented |
-| Python | Image optimisation and development tooling | Implemented |
-| Git and GitHub | Source control | Implemented |
-| GitHub Actions | Automated deployment | Implemented |
-| GitHub Pages | Current static website hosting | Implemented |
-| Amazon S3 | Private storage for static website assets | Planned |
-| Amazon CloudFront | HTTPS content delivery and caching | Planned |
-| AWS IAM | Least-privilege roles and policies | Planned |
-| AWS IAM Identity Center | Centralised human access and permission sets | Planned |
-| Amazon API Gateway | Public endpoint for contact requests | Planned |
-| AWS Lambda | Server-side validation and contact processing | Planned |
-| Amazon Simple Email Service (SES) | Email delivery | Planned |
-| AWS CloudTrail | AWS API auditing | Planned |
-| Amazon CloudWatch | Application logging, metrics and alarms | Planned |
-| AWS Budgets | Spending thresholds and notifications | Planned |
+| Frontend | HTML, CSS, JavaScript | Portfolio interface and interactions |
+| Asset preparation | Python, WebP | Image optimisation |
+| Storage | Amazon S3 | Private static assets |
+| Delivery | Amazon CloudFront | CDN, caching and HTTPS endpoint |
+| Certificate | AWS Certificate Manager (ACM) | Managed TLS certificate |
+| DNS | Amazon Route 53 | Apex and `www` alias records |
+| Registrar | Namecheap | Domain registration |
+| Source control | Git and GitHub | Version history and project source |
 
-## Security approach
+## Deployment process
 
-| Risk | Control or decision | Status |
-| --- | --- | --- |
-| Accidental credential exposure | `.gitignore` excludes common secret and private-key file patterns; initial tracked-file and content checks completed | Initial checks completed |
-| Automated contact-form spam | Hidden honeypot field in the browser | Implemented; server-side enforcement pending |
-| Malicious or malformed contact submissions | Validate and constrain inputs in Lambda; add throttling and abuse controls | Planned |
-| Unauthorised administrative access | IAM Identity Center, temporary role-based access and least-privilege permission sets | Planned |
-| Excessive service permissions | Separate, narrowly scoped IAM roles for deployment and Lambda | Planned |
-| Public access to origin files | Private S3 bucket accessed through CloudFront Origin Access Control | Planned |
-| Limited visibility into activity | CloudTrail auditing and CloudWatch logging/alarms | Planned |
-| Unexpected cloud spending | AWS Budgets alerts and careful resource selection | Planned |
+1. Built the frontend locally, version-controlled the code with Git and published the repository on GitHub.
+2. Optimised the photographs using Python and uploaded the static site files to a private S3 bucket in **Europe (London), `eu-west-2`**.
+3. Enabled **S3 Block Public Access** and configured private CloudFront access to the S3 origin. **Origin Access Control (OAC)** is the mechanism to confirm in the distribution's origin settings. With OAC, the intended bucket policy allows the **CloudFront service principal** to read objects only for the specific distribution, using an `AWS:SourceArn` condition—not anonymous public access.
+4. Created a CloudFront distribution, set `index.html` as its default root object and tested the initial CloudFront website address.
+5. Registered `mara.photography` at Namecheap after discovering that Route 53 domain registration was unavailable to the AWS Free Plan account.
+6. Requested a public ACM certificate in **US East (N. Virginia), `us-east-1`**, for `mara.photography` and `www.mara.photography`, as required by CloudFront.
+7. Created DNS-validation CNAME records, diagnosed the missing `.www` suffix on one validation hostname and obtained an **Issued** certificate.
+8. Attached the certificate and both alternate domain names to CloudFront. Selected security policy **`TLSv1.2_2021`**, with HTTP/2 and HTTP/3 enabled.
+9. Created a public Route 53 hosted zone, added **A alias records** for the apex and `www` domains pointing to CloudFront, and copied both ACM validation CNAME records to Route 53 for certificate renewal.
+10. Changed Namecheap's authoritative nameservers to the four Route 53 nameservers. Used `dig +trace NS mara.photography` to verify that the `.photography` registry delegated the domain to AWS.
+11. Diagnosed a local browser DNS error: direct queries to an AWS nameserver and the `1.1.1.1` resolver returned addresses, while the browser initially failed. Flushed the macOS DNS cache, restarted Brave and successfully opened the live website.
 
-**Security note:** The current browser-side honeypot is not a substitute for backend validation. Initial repository searches found no matches for selected common secret patterns, but they do not constitute a complete security audit or Git history scan.
+## Security and operational decisions
 
-## Run locally
+- **Private S3 storage:** S3 Block Public Access is enabled; the site is served via CloudFront, not public S3 website hosting.
+- **CloudFront origin restriction:** Private origin access is configured. The OAC setting and distribution-scoped S3 bucket policy are **pending a final console verification** (see Architecture).
+- **AWS account access:** An IAM user with **multi-factor authentication (MFA)** was configured for administration, rather than using the root user for routine work. This does **not**, by itself, establish least-privilege permissions; an IAM policy review remains planned.
+- **Transport encryption:** An ACM-issued certificate covers the apex and `www` hostnames; CloudFront uses the `TLSv1.2_2021` security policy.
+- **Certificate renewal:** Both DNS validation CNAME records are retained in Route 53.
+- **Cost controls:** AWS Budgets was configured, and the design avoids always-on EC2 instances and optional high-cost CloudFront legacy-client support. Actual costs will be documented after the first billing period.
 
-Clone the repository and start a simple local web server:
+## Local development and deployment
 
-```bash
- git clone https://github.com/Maradubu/photography-portfolio-aws.git
- cd photography-portfolio-aws/website
- python3 -m http.server 8000
-```
+The frontend lives under `website/`; the image optimisation script is under `scripts/optimise_images.py`. Open `website/index.html` for simple local checks, or serve `website/` with a local development server where needed.
 
-Open [http://localhost:8000](http://localhost:8000) in your browser. Stop the server with `Ctrl+C`.
+The current AWS deployment was performed through the AWS console. **Automated GitHub Actions deployment to AWS has not yet been implemented.** The historical GitHub Pages workflow is not the production deployment method.
 
-## Deployment
+## GitHub Pages retirement
 
-The current production website is deployed to **GitHub Pages** through `.github/workflows/deploy-pages.yml`. The workflow publishes the `website/` directory. Changes pushed to the deployment branch can trigger the workflow; deployment progress is visible under the repository's **Actions** tab.
+The former GitHub Pages deployment should be retired now that the AWS-hosted domain is live, to avoid maintaining two public copies of the site.
 
-AWS deployment is a future phase and will be documented separately once it has been tested.
+1. Confirm the AWS website and both hostnames work as intended.
+2. In **GitHub → repository → Settings → Pages**, disable the existing Pages publication (**Source: Deploy from a branch → None**, if available, or use the current Pages unpublish control).
+3. Disable or remove `.github/workflows/deploy-pages.yml` after confirming it is no longer needed; do not remove unrelated workflows.
+4. Update **GitHub repository → About → Website** to `https://mara.photography`, and replace any old GitHub Pages URL used as the *current live website* in project metadata or content. Preserve historical URLs where they are explicitly part of the project history.
+5. Verify that the old Pages URL no longer serves a second copy of the portfolio. If the old URL has already been indexed, search-engine results may take time to disappear.
+
+**Status:** Retirement instructions documented; not yet confirmed executed.
 
 ## Roadmap
 
-### Phase 1 — Functional website and delivery
+- Connect the contact form through Amazon API Gateway, AWS Lambda and Amazon Simple Email Service (SES), with server-side validation and abuse protection.
+- Build a GitHub Actions → AWS deployment pipeline with short-lived credentials and CloudFront cache invalidation.
+- Add **HTTP security headers**, including **HTTP Strict Transport Security (HSTS)**, Content Security Policy (CSP), `X-Content-Type-Options` and an appropriate `Referrer-Policy`; test compatibility before enforcement.
+- Evaluate and enable **S3 versioning** for rollback and recovery, taking storage costs into account.
+- Enable and review **AWS CloudTrail** activity logging, with appropriate retention and cost controls.
+- Review IAM permissions for least privilege; improve monitoring and security checks.
+- Decide whether `www.mara.photography` should redirect to the canonical `mara.photography` hostname.
+- **Record actual AWS costs after the first bill**, distinguishing any promotional credits from underlying usage charges.
+- Complete the outstanding Verification checks and retire GitHub Pages.
 
-- [x] Build responsive portfolio and image gallery
-- [x] Add light/dark theme and optional ambient audio
-- [x] Optimise photography assets
-- [x] Deploy publicly using GitHub Pages
-- [x] Configure GitHub Actions deployment
-- [x] Add initial contact-form honeypot
-- [x] Improve `.gitignore` and run initial secret-pattern checks
+## Status
 
-### Phase 2 — AWS hosting and governance
+**Production website:** https://mara.photography  
+**Hosting:** Amazon S3 + CloudFront  
+**Authoritative DNS:** Route 53  
+**HTTPS certificate:** AWS Certificate Manager  
+**Deployment date:** 7 November 2026
 
-- [ ] Resolve AWS account access and confirm cost eligibility
-- [ ] Configure IAM Identity Center and appropriate administrative access
-- [ ] Define least-privilege IAM roles and policies
-- [ ] Configure AWS Budgets before provisioning services
-- [ ] Deploy website assets to a private S3 bucket
-- [ ] Configure CloudFront with Origin Access Control and HTTPS
-- [ ] Configure CloudTrail auditing and CloudWatch monitoring
-- [ ] Test deployment, access controls, logging and recovery procedures
-
-### Phase 3 — Secure contact service and automation
-
-- [ ] Build an API Gateway and Lambda contact endpoint
-- [ ] Implement server-side input validation, honeypot checks and abuse protection
-- [ ] Configure SES for email delivery
-- [ ] Restrict Lambda permissions to the required actions and resources
-- [ ] Add automated tests and secure deployment checks
-- [ ] Document security verification and operational lessons learned
-
-## Costs
-
-GitHub Pages currently hosts the website. The planned AWS version will be designed with cost awareness from the outset. AWS Budgets can notify on spending thresholds but **does not automatically prevent charges**. Resource pricing, account eligibility and any free-tier benefits must be checked before deployment.
-
-## Project documentation
-
-The [`docs/`](docs/) directory is intended for implementation notes, architecture decisions, troubleshooting, security verification and lessons learned.
-
-A useful format for each technical milestone is:
-
-1. **Objective:** What problem are we solving?
-2. **Implementation:** What was configured or built?
-3. **Explanation:** Why was this approach chosen?
-4. **Verification:** How was the result tested?
-5. **Troubleshooting:** What failed and how was it resolved?
-6. **Lessons learned:** What would be improved next time?
-
----
-
-**MARA** — An evolving intersection of photography, web development, cloud engineering and security.
+This README distinguishes implemented functionality, observed test results and future work. It does not claim that the contact backend, automated AWS deployment, security headers, versioning or CloudTrail configuration have already been completed.
