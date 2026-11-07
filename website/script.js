@@ -264,20 +264,59 @@ contactModal.addEventListener("click", (event) => {
     }
 });
 
-// Contact form — backend not connected yet
+ // Contact form — AWS API Gateway + Lambda + SES
 const contactForm = document.getElementById("contact-form");
 const contactStatus = document.querySelector(".contact-status");
 const honeypot = document.getElementById("contact-website");
-contactForm.addEventListener("submit", (event) => {
+const submitButton = contactForm.querySelector(".contact-submit");
+
+const CONTACT_API =
+    "https://ozx8gv6ho9.execute-api.eu-west-2.amazonaws.com/contact";
+
+contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // Detect basic automated spam
+    // Basic spam protection
     if (honeypot.value.trim() !== "") {
-        console.warn("Honeypot triggered: submission blocked.");
         return;
     }
 
-    // AWS backend is not connected yet
-    contactStatus.textContent =
-        "Contact form is currently being configured.";
+    const formData = {
+        name: document.getElementById("contact-name").value.trim(),
+        email: document.getElementById("contact-email").value.trim(),
+        message: document.getElementById("contact-message").value.trim()
+    };
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending...";
+    contactStatus.textContent = "Sending your message...";
+
+    try {
+        const response = await fetch(CONTACT_API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        contactStatus.textContent =
+            "Thank you! Your message has been sent successfully.";
+
+        contactForm.reset();
+
+    } catch (error) {
+        console.error("Contact form error:", error);
+
+        contactStatus.textContent =
+            "Sorry, something went wrong. Please try again.";
+
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Send message";
+    }
 });
